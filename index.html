@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1024">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Catch Me Game</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -13,22 +13,21 @@
             color: white; 
             font-family: Arial, sans-serif; 
             overflow: hidden; 
-            height: 100vh; 
-            width: 100vw;
-            display: flex; 
-            flex-direction: column; 
+            height: 100%; 
+            width: 100%;
+            position: fixed; 
         }
         #header { 
-            padding: 20px; 
+            padding: 10px 20px; 
             z-index: 10; 
             background: rgba(15, 23, 42, 0.9);
-            border-bottom: 2px solid #334155;
+            border-bottom: 1px solid #334155;
+            height: 80px;
         }
         #game-area { 
-            flex-grow: 1; 
             position: relative; 
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: calc(100vh - 80px); 
             overflow: hidden;
         }
         #catch-button { 
@@ -36,8 +35,8 @@
             top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
-            padding: 15px 35px; 
-            font-size: 18px; 
+            padding: 12px 25px; 
+            font-size: 16px; 
             font-weight: bold; 
             color: white; 
             background: linear-gradient(45deg, #ef4444, #f97316); 
@@ -45,8 +44,9 @@
             border-radius: 50px; 
             cursor: pointer; 
             transition: all 0.1s ease-out; 
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); 
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); 
             z-index: 5;
+            white-space: nowrap;
         }
         #win-modal { 
             position: fixed; 
@@ -61,29 +61,40 @@
         }
         .modal-content { 
             background: #1e293b; 
-            padding: 40px; 
-            border-radius: 25px; 
+            padding: 30px; 
+            border-radius: 20px; 
             text-align: center; 
             border: 3px solid #eab308; 
-            max-width: 500px; 
+            max-width: 90%; 
+        }
+        /* AAPKA MANGA HUA BADA TEXT STYLE */
+        .win-text {
+            color: #eab308;
+            font-size: 45px; /* Bahut bada size */
+            font-weight: 900;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+            line-height: 1.2;
+            text-shadow: 2px 2px 10px rgba(234, 179, 8, 0.5);
         }
         .victory-image { 
-            width: 300px; 
-            height: 300px; 
+            width: 250px; 
+            height: 250px; 
             object-fit: cover; 
-            border-radius: 20px; 
-            margin: 20px 0; 
-            border: 5px solid #eab308; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            border: 5px solid #fff; 
         }
         #play-again { 
             padding: 15px 30px; 
             background: #eab308; 
             color: black; 
             border: none; 
-            border-radius: 12px; 
+            border-radius: 10px; 
             font-weight: bold; 
-            cursor: pointer; 
-            font-size: 18px;
+            cursor: pointer;
+            font-size: 20px;
+            width: 100%;
         }
     </style>
 </head>
@@ -97,8 +108,8 @@
     </audio>
 
     <div id="header">
-        <h1 style="margin:0; color: #ec4899; font-size: 28px;">Catch Me If You Can!</h1>
-        <p style="margin: 5px 0 0 0; font-size: 18px; color: #94a3b8;">Attempts: <span id="attempts">0</span></p>
+        <h1 style="margin:0; font-size: 20px; color: #ec4899;">Catch Me!</h1>
+        <p style="margin: 5px 0 0 0; font-size: 14px;">Attempts: <span id="attempts">0</span></p>
     </div>
 
     <div id="game-area">
@@ -107,9 +118,11 @@
 
     <div id="win-modal">
         <div class="modal-content">
-            <h1 style="color: #eab308; margin: 0; font-size: 32px;">Victory!</h1>
-            <img src="127828206.jpg" alt="Winner" class="victory-image">
-            <p style="font-size: 20px; margin-bottom: 25px;">You caught the uncatchable!</p>
+            <div class="win-text">Kay chehra bhosdi</div>
+            
+            <img src="127828206.jpg" alt="Victory" class="victory-image">
+            
+            <p style="font-size: 18px; margin-bottom: 25px; color: #94a3b8;">Impossible Achieved!</p>
             <button id="play-again">Play Again</button>
         </div>
     </div>
@@ -137,18 +150,21 @@
                 return;
             }
 
-            // Boundary Logic: Screen ke andar rakhne ke liye
-            const padding = 60; // Safe distance from edges
-            const maxX = area.clientWidth - btn.offsetWidth - padding;
-            const maxY = area.clientHeight - btn.offsetHeight - padding;
+            const areaWidth = area.offsetWidth;
+            const areaHeight = area.offsetHeight;
+            const btnWidth = btn.offsetWidth;
+            const btnHeight = btn.offsetHeight;
+            const padding = 40;
 
-            // Random position generate karna (padding ke andar)
+            const maxX = areaWidth - btnWidth - padding;
+            const maxY = areaHeight - btnHeight - padding;
+
             const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
             const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
 
             btn.style.left = randomX + 'px';
             btn.style.top = randomY + 'px';
-            btn.style.transform = 'none'; // Position fix karne ke liye
+            btn.style.transform = 'none'; 
 
             bgMusic.play().catch(() => {});
         }
@@ -159,7 +175,7 @@
             bgMusic.pause();
             winSound.currentTime = 0;
             winSound.play().catch(e => console.log("Sound Error"));
-            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
         }
 
         btn.addEventListener('mouseover', moveButton);
