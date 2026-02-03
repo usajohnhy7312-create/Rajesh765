@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catch Me Game</title>
+    <title>Catch Me If You Can</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body { margin: 0; padding: 0; background-color: #0f172a; color: white; font-family: Arial, sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
@@ -12,8 +12,9 @@
         #catch-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 15px 30px; font-size: 18px; font-weight: bold; color: white; background: linear-gradient(45deg, #ef4444, #f97316); border: none; border-radius: 50px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
         #win-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
         .modal-content { background: #1e293b; padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #334155; max-width: 90%; }
-        .victory-image { width: 250px; height: 250px; object-fit: cover; border-radius: 15px; margin: 20px 0; border: 4px solid #eab308; }
-        #play-again { padding: 12px 25px; background: white; color: black; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .victory-image { width: 250px; height: 250px; object-fit: cover; border-radius: 15px; margin: 20px 0; border: 4px solid #eab308; box-shadow: 0 0 25px rgba(234, 179, 8, 0.4); }
+        #play-again { padding: 12px 25px; background: white; color: black; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .score-board { background: rgba(30, 41, 59, 0.8); padding: 8px 15px; border-radius: 20px; border: 1px solid #334155; display: inline-block; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
 
     <div id="header">
         <h1 style="margin:0; color: #ec4899;">Catch Me!</h1>
-        <p>Attempts: <span id="attempts">0</span></p>
+        <div class="score-board">Attempts: <span id="attempts">0</span></div>
     </div>
 
     <div id="game-container">
@@ -40,7 +41,7 @@
             
             <img src="127828206.jpg" alt="Victory" class="victory-image">
             
-            <p>You caught the uncatchable!</p>
+            <p>Impossible Achieved! You caught it!</p>
             <button id="play-again">Play Again</button>
         </div>
     </div>
@@ -61,7 +62,7 @@
             attempts++;
             attemptsDisplay.innerText = attempts;
 
-            // 10% Chance to win randomly
+            // 10% Chance to win randomly (jaisa aapne manga tha)
             if (Math.random() < 0.10) {
                 handleWin();
                 return;
@@ -73,21 +74,32 @@
             btn.style.left = `${x}px`;
             btn.style.top = `${y}px`;
 
-            // Music play on interaction
+            // Start background music
             bgMusic.play().catch(() => {});
         }
 
         function handleWin() {
             gameWon = true;
             modal.style.display = 'flex';
-            bgMusic.pause(); // Purana gaana stop
+            
+            // Background music pause aur winning sound play
+            bgMusic.pause();
             winSound.currentTime = 0;
-            winSound.play(); // Jeetne wala gaana start
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            winSound.play().catch(e => console.log("Sound error:", e));
+
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
         }
 
         btn.addEventListener('mouseover', moveButton);
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
         btn.addEventListener('click', handleWin);
 
         playAgainBtn.addEventListener('click', () => {
@@ -97,8 +109,11 @@
             modal.style.display = 'none';
             btn.style.top = '50%';
             btn.style.left = '50%';
-            winSound.pause(); // Winning gaana stop
-            bgMusic.play();  // Shuruat wala gaana restart
+
+            // Winning sound stop aur background music restart
+            winSound.pause();
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {});
         });
     </script>
 </body>
